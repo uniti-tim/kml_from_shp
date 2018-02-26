@@ -4,16 +4,17 @@ require 'rgeo/shapefile'
 require 'ruby_kml'
 
 #Specify here the relative path and name to your shapefile set. Exclude the filetype extension.
-src = "New_Orleans_Levee_Polygons"
+path = "../../Shapefiles for Pricing Tool/Shapefiles for Pricing Tool/"
+file = "City_Boundaries_Sample_Area"
 
 write_to_file = true
 puts (write_to_file)? "Will be writing records to file...":nil
 kml = KMLFile.new
-folder = KML::Folder.new(:name=>src)
+folder = KML::Folder.new(:name=>file)
 ts = Time.now
 
 
-RGeo::Shapefile::Reader.open("#{src}.shp",:assume_inner_follows_outer => true) do |file|
+RGeo::Shapefile::Reader.open("#{path+file}.shp",:assume_inner_follows_outer => true) do |file|
   puts "File contains #{file.num_records} records."
   file.each do |record|
     points_array = Array.new()
@@ -47,6 +48,6 @@ RGeo::Shapefile::Reader.open("#{src}.shp",:assume_inner_follows_outer => true) d
 end
 
 kml.objects << folder
-(write_to_file)? File.write("#{src}.kml",kml.render) : (puts kml.render)
+(write_to_file)? File.write("#{file}.kml",kml.render) : (puts kml.render)
 
 puts "Completed conversion in #{Time.now - ts}s"
