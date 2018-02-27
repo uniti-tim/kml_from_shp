@@ -11,6 +11,17 @@ write_to_file = true
 puts (write_to_file)? "Will be writing records to file...":nil
 kml = KMLFile.new
 folder = KML::Folder.new(:name=>file)
+style = KML::Style.new(
+  :id => 'transBluePoly',
+  :line_style=> KML::LineStyle.new(
+    :width=>1.5
+  ),
+  :poly_style=>KML::PolyStyle.new(
+    :color=>'7dff0000'
+  )
+)
+folder.features << style
+
 ts = Time.now
 
 
@@ -30,7 +41,8 @@ RGeo::Shapefile::Reader.open("#{path+file}.shp",:assume_inner_follows_outer => t
     folder.features << KML::Placemark.new(
       #These were my naming conventions knowing how my GIS files were set. Your milage may vary
       :name => "#{record.attributes['NAME'] || record.attributes['Name'] } #{ (!record.attributes[id_key].zero? && !record.attributes[id_key].nil? )? "(ID: #{record.attributes[id_key]})":nil }",
-      :snippet => KML::Snippet.new(:text=>record.attributes['OBJECTID']),
+      :address=> "#{record.attributes['OBJECTID']}", #used to store Id since Snippet isnt accessible
+      :style_url => '#transBluePoly',
       :geometry => KML::MultiGeometry.new(
         :features => [
 
